@@ -38,14 +38,7 @@ local encodings = {
 	[ 3 ] = { name = "UTF-8" ,      terminator = "\0" } ,
 }
 
-local function toutf8 ( str , from )
-	if from == "UTF-8" then
-		return str
-	else
-		return text_encoding ( str , from , "UTF-8" )
-	end
-end
-
+local toutf8 = misc.toutf8
 local function read_synchsafe_integer ( s )
 	local b1 , b2 , b3 , b4 = strbyte ( s , 1 , 4 )
 	return b1*2^21 + b2*2^14 + b3*2^7 + b4
@@ -738,7 +731,24 @@ local function read ( get , header , tags , extra )
 	return tags , extra
 end
 
+function info(fd, off, header)
+   if offset then fd:seek ("set", offset) end
+
+   local tag
+   if off then
+      ok,tag = pcall(read,get,header)
+   end
+   if not ok or not tag then
+      -- fail
+      return nil, {"ID3v2 fail"}
+   else
+      return tag, {}
+   end
+end
+
+
 return {
 	find = find ;
 	read = read ;
+   info = info ;
 }
