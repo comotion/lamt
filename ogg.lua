@@ -14,11 +14,12 @@ require "general"
 local ipairs , require , unpack = ipairs , require , unpack
 local ioopen = io.open
 
-module ( "lomp.fileinfo.ogg" , package.see ( lomp ) )
+--module ( "lomp.fileinfo.ogg" , package.see ( lomp ) )
+module ( ... , package.seeall)
 
 local vstruct = require "vstruct"
 
-local vorbiscomments = require "modules.fileinfo.vorbiscomments"
+local vorbiscomments = require "vorbiscomments"
 
 local O , g , S = ( "OgS" ):byte ( 1 , 3 )
 local function validpage ( a , b , c , d )

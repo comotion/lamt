@@ -40,7 +40,11 @@ local function get_from_string ( s , i )
 			n = #s - i + 1
 		end
 		i = i + n
-		assert ( i-1 <= #s , "Unable to read enough characters" )
+		--assert ( i-1 <= #s , "Unable to read enough characters" )
+      if(i-1 > #s)
+         then
+         return 'BROKEN'
+      end
 		return strsub ( s , i-n , i-1 )
 	end , function ( new_i )
 		if new_i then i = new_i end
@@ -53,8 +57,11 @@ local function get_from_fd ( fd )
 		if not n then
 			return assert ( fd:read ( "*a" ) )
 		else
-			local r = assert ( fd:read ( n ) )
-			if #r < n then return error ( "Unable to read enough characters" ) end
+			local r = ( fd:read ( n ) )
+			if not r or  #r < n then
+            --return error ( "Unable to read enough characters" )
+            return nil
+            end
 			return r
 		end
 	end , function ( newpos )
@@ -110,8 +117,10 @@ function strexplode ( str , seperator , plain , init )
 end
 
 local function text_encoding ( str , from , to )
-	local c = iconv.new ( from , to )
-	return c ( str )
+	local c = iconv.new ( to, from )
+	local r = c:iconv ( str )
+   --print("f:"..from.." r:"..r.." t:"..to.." s:"..str)
+   return r
 end
 
 local date_mt = {
@@ -145,6 +154,15 @@ local date_mt = {
 local function new_date ( t )
 	return setmetatable ( t , date_mt )
 end
+
+function toutf8 ( str , from )
+	if from == "UTF-8" then
+		return str
+	else
+		return text_encoding ( str , from , "UTF-8" )
+	end
+end
+
 
 return {
 	file_insert = file_insert ;

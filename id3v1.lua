@@ -14,7 +14,8 @@ require "general"
 local ipairs , pairs , pcall , select , require , tonumber , tostring , type = ipairs , pairs , pcall , select , require , tonumber , tostring , type
 local ioopen = io.open
 
-module ( "lomp.fileinfo.id3v1" , package.see ( lomp ) )
+--module ( "lomp.fileinfo.id3v1" , package.see ( lomp ) )
+module(...,package.seeall)
 
 local iconv = require "iconv"
 local genreindex = require ( select ( 1 , ... ):match ( "(.*%.)[^.]+$" ) .. "genrelist" )
@@ -34,7 +35,7 @@ local speedindex = {
 local function readstring ( str )
 	str = str:gsub ( "[%s%z]*$" , "" )
 	if #str == 0 then return nil end
-	return str:utf8 ( Locale )
+	return toutf8 ( str, Locale )
 end
 
 function find ( fd )

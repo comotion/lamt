@@ -11,7 +11,8 @@
 
 local ipairs = ipairs
 
-module ( "lomp.fileinfo.tagfrompath" , package.see ( lomp ) )
+--module ( "lomp.fileinfo.tagfrompath" , package.see ( lomp ) )
+module (..., package.seeall)
 
 local subs = {
 	["album artist"] = "([^/]+)" ,
@@ -25,6 +26,8 @@ local subs = {
 
 function info ( path , pattern , donotescapepattern )
 	if not pattern then return false end
+   path = path:gsub("_", " ")
+   path = path:gsub("/", " - ")
 	local a = { }
 	if not donotescapepattern then pattern = pattern:gsub ( "[%%%.%^%$%+%*%[%]%-%(%)]" , function ( str ) return "%" .. str end ) end-- Escape any characters that may need it except "?"
 	pattern = pattern:gsub ( "//_//" , "[^/]-" ) -- Junk operator

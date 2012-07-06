@@ -13,11 +13,11 @@ local pairs = pairs
 local strgmatch , strrep = string.gmatch , string.rep
 local tblinsert , tblconcat = table.insert , table.concat
 
-local misc = require "misc"
+local misc = require "lamt.misc"
 local get_from_fd = misc.get_from_fd
 local read_terminated_string = misc.read_terminated_string
 
-local ll = require "ll"
+local ll = require "lamt.ll"
 local le_uint_to_num = ll.le_uint_to_num
 local num_to_le_uint = ll.num_to_le_uint
 local extract_bits =   ll.extract_bits

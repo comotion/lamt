@@ -18,12 +18,13 @@ local strbyte = string.byte
 local floor = math.floor
 local ioopen = io.open
 
-module ( "lomp.fileinfo.mpeg" , package.see ( lomp ) )
+--module ( "lomp.fileinfo.mpeg" , package.seeall { lomp } )
+module (... , package.seeall)
 
-require ( prefix .. "APE" )
-require ( prefix .. "id3v2" )
-require ( prefix .. "id3v1" )
-require ( prefix .. "tagfrompath" )
+local APE = require ( prefix .. "APE" )
+local id3v2 = require ( prefix .. "id3v2" )
+local id3v1 = require ( prefix .. "id3v1" )
+local tagfrompath = require ( prefix .. "tagfrompath" )
 
 -- If quick it set, lengths and bitrates of many VBR files will probably be incorrect
 local quick = false
@@ -158,7 +159,7 @@ function info ( item )
 	
 	-- APE
 	if not item.tagtype then
-		local offset , header = fileinfo.APE.find ( fd )
+		local offset , header = APE.find ( fd )
 		if offset and not item.tagtype then
 			if offset == 0 then 
 				tagatsof = tagatsof + header.size
@@ -169,14 +170,14 @@ function info ( item )
 				end
 			end
 			item.tagtype = "APE"
-			item.tags , item.extra = fileinfo.APE.info ( fd , offset , header )
+			item.tags , item.extra = APE.info ( fd , offset , header )
 			item.extra.header = header
 		end
 	end
 
 	-- ID3v2
 	if not item.tagtype then
-		local offset , header = fileinfo.id3v2.find ( fd )
+		local offset , header = id3v2.find ( fd )
 		if offset and not item.tagtype then
 			if offset == 0 then
 				tagatsof = tagatsof + header.size + 10
@@ -184,18 +185,18 @@ function info ( item )
 				tagateof = tagateof + header.size + 10
 			end
 			item.tagtype = "id3v2"
-			item.tags , item.extra = fileinfo.id3v2.info ( fd , offset , header )
+			item.tags , item.extra = id3v2.info ( fd , offset , header )
 			item.extra.header = header
 		end
 	end
 	
 	-- ID3v1 or ID3v1.1 tag
 	if not item.tagtype then
-		local offset = fileinfo.id3v1.find ( fd )
+		local offset = id3v1.find ( fd )
 		if offset then tagateof = tagateof + 128 end
 		if offset and not item.tagtype then
 			item.tagtype = "id3v1"
-			item.tags , item.extra = fileinfo.id3v1.info ( fd , offset )
+			item.tags , item.extra = id3v1.info ( fd , offset )
 		end
 	end
 	
@@ -203,7 +204,7 @@ function info ( item )
 	if not item.tagtype then
 		if config and config.tagpatterns and config.tagpatterns.default then -- If you get to here, there is probably no tag....
 			item.tagtype = "pathderived"
-			item.tags = fileinfo.tagfrompath.info ( item.path , config.tagpatterns.default )
+			item.tags = tagfrompath.info ( item.path , config.tagpatterns.default )
 			item.extra = { }
 		else
 			item.tags , item.extra = { } , { }
@@ -424,9 +425,9 @@ end
 
 function edit ( item , edits , inherit )
 	if item.tagtype == "id3v1" then -- ID3v1 or ID3v1.1 tag
-		return fileinfo.id3v1.edit ( item.path , edits , true )
+		return id3v1.edit ( item.path , edits , true )
 	elseif item.tagtype == "APE" then -- APE
-		return fileinfo.APE.edit ( item.path , edits , inherit )
+		return APE.edit ( item.path , edits , inherit )
 	--elseif item.tagtype == "id3v2" then -- ID3v2
 	else -- id3v2 by default
 		local overwrite
@@ -437,7 +438,7 @@ function edit ( item , edits , inherit )
 		end
 		local id3version = item.extra.id3v2version or 3
 		--edit ( tags , path , overwrite , id3version , footer , dontwrite )
-		return fileinfo.id3v2.edit ( edits , item.path , overwrite , id3version , false , false )
+		return id3v2.edit ( edits , item.path , overwrite , id3version , false , false )
 	end
 end
 

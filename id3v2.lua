@@ -15,11 +15,12 @@ local tblinsert = table.insert
 local tblconcat = table.concat
 local ceil = math.ceil
 
-local ll = require "ll"
+module(...,package.seeall)
+local ll = require "lamt.ll"
 local be_uint_to_num = ll.be_uint_to_num
 local be_bpeek = ll.be_bpeek
 
-local misc = require "misc"
+local misc = require "lamt.misc"
 local get_from_fd = misc.get_from_fd
 local get_from_string = misc.get_from_string
 local read_terminated_string = misc.read_terminated_string
@@ -27,7 +28,7 @@ local strexplode = misc.strexplode
 local text_encoding = misc.text_encoding
 local new_date = misc.new_date
 
-local genrelist = require "genrelist"
+local genrelist = require "lamt.genrelist"
 
 -- Table of Encodings
 local encodings = {
@@ -80,14 +81,14 @@ local function find ( fd )
 	assert ( fd:seek ( "set" ) )
 	local h = read_header ( get )
 	if h then
-		return 10 , h
+		return 10 , h, get
 	end
 
 	-- Look at end of file
-	local pos = assert ( fd:seek ( "end" , -10 ) )
+	local pos = ( fd:seek ( "end" , -10 ) )
 	local h = read_header ( get )
 	if h and h.isfooter then
-		return pos - h.size , h
+		return pos - h.size , h, get
 	end
 
 	-- No tag
@@ -185,10 +186,10 @@ local function get_frame ( get , version_major )
 		frame = ununsynch ( frame )
 	end
 	if encryption_method then
-		error ( "Decryption not implemented" )
+		--error ( "Decryption not implemented" )
 	end
 	if format_zlib_compressed then
-		error ( "Zlib decompression not implemented" )
+		--error ( "Zlib decompression not implemented" )
 	end
 
 	return {
@@ -729,7 +730,7 @@ local function read ( get , header , tags , extra )
 				break
 			elseif experimental or id_1 == "X" or id_1 == "Y" or id_1 == "Z" then -- Ignore
 			else
-				error ( "No decoder for frame id: " .. frameinfo.id )
+				--error ( "No decoder for frame id: " .. frameinfo.id )
 			end
 		end
 	end
