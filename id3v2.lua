@@ -27,6 +27,7 @@ local read_terminated_string = misc.read_terminated_string
 local strexplode = misc.strexplode
 local text_encoding = misc.text_encoding
 local new_date = misc.new_date
+local toutf8 = misc.toutf8
 
 local genrelist = require "lamt.genrelist"
 
@@ -38,7 +39,6 @@ local encodings = {
 	[ 3 ] = { name = "UTF-8" ,      terminator = "\0" } ,
 }
 
-local toutf8 = misc.toutf8
 local function read_synchsafe_integer ( s )
 	local b1 , b2 , b3 , b4 = strbyte ( s , 1 , 4 )
 	return b1*2^21 + b2*2^14 + b3*2^7 + b4

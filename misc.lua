@@ -177,4 +177,6 @@ return {
 	text_encoding = text_encoding ;
 
 	new_date = new_date ;
+
+	toutf8 = toutf8;
 }
