@@ -733,6 +733,7 @@ end
 
 function info(fd, off, header)
    if offset then fd:seek ("set", offset) end
+   local get = get_from_fd(fd)
 
    local tag
    if off then
